@@ -26,6 +26,8 @@ Client:
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 
+The frontend will also fall back to `/api/config` at runtime if the Vite variables are missing at build time. That requires the server-side `SUPABASE_URL` and `SUPABASE_ANON_KEY` variables to be configured in Vercel.
+
 Serverless/API:
 
 - `SUPABASE_URL`
@@ -39,6 +41,21 @@ Run these files in order inside Supabase SQL Editor:
 1. `sql/001_user_roles.sql`
 2. `sql/002_slots.sql`
 3. `sql/003_overlays.sql`
+4. `sql/004_slots_seed.sql`
+
+If your database already has an older minimal `public.slots` table, run `sql/005_slots_metadata_upgrade.sql` before `sql/004_slots_seed.sql`.
+
+Optional: if you already have a wide slots export and need a repo-compatible seed, generate and run `sql/004_slots_seed.sql`:
+
+```bash
+node scripts/generate-clean-slots-seed.mjs /path/to/slots_rows.sql sql/004_slots_seed.sql
+```
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\generate-clean-slots-seed.ps1 -SourcePath C:\path\to\slots_rows.sql -OutputPath .\sql\004_slots_seed.sql
+```
 
 After that, give the target user the premium role:
 

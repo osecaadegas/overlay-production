@@ -1,8 +1,75 @@
 import { createClient } from '@supabase/supabase-js';
 
-// These will come from your Supabase project dashboard
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+let supabaseClient;
+let initializePromise;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function getBuildTimeConfig() {
+	const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+	const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+	if (!supabaseUrl || !supabaseAnonKey) {
+		return null;
+	}
+
+	return { supabaseUrl, supabaseAnonKey };
+}
+
+async function getRuntimeConfig() {
+	const response = await fetch('/api/config', {
+		headers: {
+			Accept: 'application/json',
+		},
+	});
+
+	const payload = await response.json().catch(() => ({}));
+
+	if (!response.ok) {
+		throw new Error(payload.error || 'Failed to load runtime Supabase config.');
+	}
+
+	if (!payload.supabaseUrl || !payload.supabaseAnonKey) {
+		throw new Error('Runtime Supabase config is incomplete.');
+	}
+
+	return payload;
+}
+
+function getSupabaseClient() {
+	if (!supabaseClient) {
+		throw new Error('Supabase client has not been initialized.');
+	}
+
+	return supabaseClient;
+}
+
+export async function initializeSupabase() {
+	if (supabaseClient) {
+		return supabaseClient;
+	}
+
+	if (!initializePromise) {
+		initializePromise = (async () => {
+			const config = getBuildTimeConfig() || await getRuntimeConfig();
+			supabaseClient = createClient(config.supabaseUrl, config.supabaseAnonKey);
+			return supabaseClient;
+		})().catch((error) => {
+			initializePromise = undefined;
+			throw error;
+		});
+	}
+
+	return initializePromise;
+}
+
+export const supabase = new Proxy(
+	{},
+	{
+		get(_target, property) {
+			const client = getSupabaseClient();
+			const value = Reflect.get(client, property, client);
+			return typeof value === 'function' ? value.bind(client) : value;
+		},
+	}
+);
+
 export default supabase;
