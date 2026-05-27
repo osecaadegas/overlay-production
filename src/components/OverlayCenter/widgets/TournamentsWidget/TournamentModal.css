@@ -649,3 +649,184 @@
   margin-top: 0;
   font-size: 0.75rem;
 }
+
+/* Source-aligned tournament theming */
+.modal-draggable.tournament-modal {
+  width: min(1180px, calc(100vw - 40px));
+  max-width: calc(100vw - 40px);
+}
+
+.tournament-modal .modal-content {
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(139, 92, 246, 0.14), transparent 32%),
+    linear-gradient(180deg, rgba(17, 24, 39, 0.96), rgba(8, 10, 18, 0.98));
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.48);
+}
+
+.format-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--oc-text-secondary);
+  padding: 0.75rem 1rem;
+}
+
+.format-btn:hover {
+  border-color: rgba(139, 92, 246, 0.26);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.format-btn.active {
+  background: rgba(139, 92, 246, 0.18);
+  border-color: rgba(139, 92, 246, 0.42);
+  color: var(--oc-accent-light);
+}
+
+.tournament-player-entry,
+.match-result-card {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.player-number {
+  background: rgba(139, 92, 246, 0.16);
+  color: var(--oc-accent-light);
+}
+
+.player-label,
+.match-title,
+.match-input-label,
+.current-match-display,
+.vs-text {
+  color: var(--oc-accent-light);
+}
+
+.tournament-player-input,
+.tournament-slot-input,
+.match-input {
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(2, 6, 23, 0.72);
+}
+
+.tournament-player-input:focus,
+.tournament-slot-input:focus,
+.match-input:focus {
+  border-color: rgba(139, 92, 246, 0.45);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.16);
+}
+
+.selected-slot-preview,
+.player-slot-image,
+.tournament-slot-suggestion img {
+  border-radius: 12px;
+  border-color: rgba(139, 92, 246, 0.24);
+}
+
+.tournament-slot-suggestions {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(6, 10, 18, 0.98);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.36);
+}
+
+.tournament-slot-suggestion {
+  padding: 0.7rem 0.8rem;
+  border-bottom-color: rgba(255, 255, 255, 0.04);
+}
+
+.tournament-slot-suggestion:hover {
+  background: rgba(139, 92, 246, 0.12);
+}
+
+.start-tournament-btn {
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(124, 58, 237, 0.22);
+}
+
+.update-btn {
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(20, 184, 166, 0.2);
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.2);
+}
+
+.advance-btn {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(245, 158, 11, 0.2);
+}
+
+.winner-select-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(2, 6, 23, 0.88);
+  color: var(--oc-text-secondary);
+}
+
+.winner-select-btn:hover {
+  border-color: rgba(139, 92, 246, 0.28);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.winner-select-btn.winner {
+  background: rgba(20, 184, 166, 0.16);
+  border-color: rgba(20, 184, 166, 0.42);
+  color: #99f6e4;
+  box-shadow: 0 0 0 1px rgba(20, 184, 166, 0.08) inset;
+}
+
+.match-result-card.active-match {
+  border-color: rgba(139, 92, 246, 0.34);
+  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.08) inset;
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.tournament-winner {
+  border-radius: 20px;
+  border-color: rgba(139, 92, 246, 0.38);
+  color: #ede9fe;
+  background: rgba(139, 92, 246, 0.14);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
+}
+
+@media (max-width: 900px) {
+  .matches-list,
+  .tournament-players-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .match-players {
+    flex-direction: column;
+  }
+
+  .player-card,
+  .player-card:first-child,
+  .player-card:last-child {
+    flex-direction: row;
+  }
+
+  .winner-select-btn {
+    position: static;
+    transform: none;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .match-result-card {
+    padding-bottom: 0.75rem;
+  }
+
+  .player-inputs {
+    max-width: none;
+  }
+}

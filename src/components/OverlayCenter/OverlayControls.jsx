@@ -4,25 +4,42 @@ import { usePremium } from '../../hooks/usePremium';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../config/supabaseClient';
 import { getAllSlots } from '../../utils/slotUtils';
-import BonusHuntWidget from './widgets/BonusHuntWidget/BonusHuntWidget';
-import SessionStatsWidget from './widgets/SessionStatsWidget/SessionStatsWidget';
-import RecentWinsWidget from './widgets/RecentWinsWidget/RecentWinsWidget';
-import TournamentsWidget from './widgets/TournamentsWidget/TournamentsWidget';
-import CoinFlipWidget from './widgets/CoinFlipWidget/CoinFlipWidget';
-import SlotmachineWidget from './widgets/SlotmachineWidget/SlotmachineWidget';
-import RandomSlotPickerWidget from './widgets/RandomSlotPickerWidget/RandomSlotPickerWidget';
-import WheelOfNamesWidget from './widgets/WheelOfNamesWidget/WheelOfNamesWidget';
-import NavbarWidget from './widgets/NavbarWidget/NavbarWidget';
-import ChatWidget from './widgets/ChatWidget/ChatWidget';
-import CustomizationWidget from './widgets/CustomizationWidget/CustomizationWidget';
 import WidgetSettingsTab from './tabs/WidgetSettingsTab';
 import PositioningTab from './tabs/PositioningTab';
 import LayoutTab from './tabs/LayoutTab';
 import StylesTab from './tabs/StylesTab';
 import './OverlayControls.css';
 
+const PANEL_META = {
+  overview: {
+    label: 'Overview',
+    icon: '◈',
+    description: 'URLs, preview access, and workspace status.',
+  },
+  widgets: {
+    label: 'Widgets',
+    icon: '⚙',
+    description: 'Manage each overlay widget and its live settings.',
+  },
+  layout: {
+    label: 'Layouts',
+    icon: '◫',
+    description: 'Choose display modes for supported widgets.',
+  },
+  positioning: {
+    label: 'Positioning',
+    icon: '✦',
+    description: 'Adjust widget placement with the live preview.',
+  },
+  styles: {
+    label: 'Styles',
+    icon: '✺',
+    description: 'Tune the saved theme colors for the overlay.',
+  },
+};
+
 export default function OverlayControls() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { isPremium, loading: premiumLoading } = usePremium();
   const navigate = useNavigate();
   
@@ -31,9 +48,12 @@ export default function OverlayControls() {
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
   const [slots, setSlots] = useState([]);
-  const [activeTab, setActiveTab] = useState('widgets');
+  const [activeTab, setActiveTab] = useState('overview');
 
   const overlayUrl = overlay ? `${window.location.origin}/premium/overlay?id=${overlay.public_id}` : '';
+  const previewUrl = overlay ? `${overlayUrl}&preview=true` : '';
+  const activePanel = PANEL_META[activeTab] ?? PANEL_META.overview;
+  const accountLabel = user?.email || user?.user_metadata?.full_name || user?.id;
 
   useEffect(() => {
     if (!user) {
@@ -96,6 +116,7 @@ export default function OverlayControls() {
       if (response.ok) {
         const data = await response.json();
         setOverlay(data);
+        setActiveTab('overview');
       } else {
         console.error('Failed to create overlay');
       }
@@ -146,127 +167,205 @@ export default function OverlayControls() {
   }, []);
 
   const copyToClipboard = () => {
+    if (!overlayUrl) {
+      return;
+    }
+
     navigator.clipboard.writeText(overlayUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/', { replace: true });
+  };
+
+  const renderOverviewPanel = () => {
+    if (!overlay) {
+      return (
+        <div className="oc-empty-panel">
+          <span className="oc-panel-chip">New workspace</span>
+          <h2>Create your overlay workspace</h2>
+          <p>
+            Generate the dedicated overlay record first. Once it exists, the OBS URL, live preview,
+            layout controls, and widget configuration panels unlock automatically.
+          </p>
+          <button className="oc-btn-primary" onClick={createOverlay} disabled={saving}>
+            {saving ? 'Creating overlay...' : 'Create overlay'}
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="oc-overview-grid">
+        <section className="oc-url-card">
+          <span className="oc-panel-chip">OBS Browser Source</span>
+          <h2>Overlay URL</h2>
+          <p>Use this URL as your Browser Source in OBS or Streamlabs.</p>
+          <div className="oc-url-box">
+            <input type="text" value={overlayUrl} readOnly className="oc-url-input" />
+            <button className="oc-btn-primary" onClick={copyToClipboard}>
+              {copied ? 'Copied' : 'Copy URL'}
+            </button>
+          </div>
+          <div className="oc-card-actions">
+            <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="oc-btn-secondary">
+              Open live preview
+            </a>
+          </div>
+        </section>
+
+        <div className="oc-summary-grid">
+          <article className="oc-summary-card">
+            <span className="oc-summary-label">Overlay</span>
+            <strong>{overlay.public_id}</strong>
+            <p>Public identifier used by the premium overlay route.</p>
+          </article>
+          <article className="oc-summary-card">
+            <span className="oc-summary-label">Catalog</span>
+            <strong>{slots.length.toLocaleString()} slots</strong>
+            <p>Slot data is ready for widgets that depend on the shared library.</p>
+          </article>
+          <article className="oc-summary-card">
+            <span className="oc-summary-label">Access</span>
+            <strong>Premium active</strong>
+            <p>Your current account can use the extracted overlay APIs and UI.</p>
+          </article>
+          <article className="oc-summary-card">
+            <span className="oc-summary-label">Saving</span>
+            <strong>Automatic</strong>
+            <p>Widget, positioning, and style changes are persisted as you update them.</p>
+          </article>
+        </div>
+      </div>
+    );
+  };
+
+  const renderLockedPanel = () => (
+    <div className="oc-empty-panel">
+      <span className="oc-panel-chip">Overlay required</span>
+      <h2>Create the overlay first</h2>
+      <p>
+        This section becomes available as soon as the overlay record exists. Start from the overview panel,
+        generate the workspace, then come back here to configure the active widgets.
+      </p>
+      <button className="oc-btn-primary" onClick={createOverlay} disabled={saving}>
+        {saving ? 'Creating overlay...' : 'Create overlay'}
+      </button>
+    </div>
+  );
+
+  const renderPanelContent = () => {
+    if (!overlay && activeTab !== 'overview') {
+      return renderLockedPanel();
+    }
+
+    switch (activeTab) {
+      case 'widgets':
+        return <WidgetSettingsTab overlay={overlay} updateSettings={updateSettings} slots={slots} />;
+      case 'layout':
+        return <LayoutTab overlay={overlay} updateSettings={updateSettings} />;
+      case 'positioning':
+        return <PositioningTab overlay={overlay} updateSettings={updateSettings} />;
+      case 'styles':
+        return <StylesTab overlay={overlay} updateSettings={updateSettings} />;
+      case 'overview':
+      default:
+        return renderOverviewPanel();
+    }
+  };
+
   if (loading || premiumLoading) {
     return (
-      <div className="overlay-controls-page">
-        <div className="loading">Loading...</div>
+      <div className="oc-page">
+        <div className="oc-loading">
+          <div className="oc-spinner" />
+          <p>Loading your overlay workspace...</p>
+        </div>
       </div>
     );
   }
 
   if (!isPremium) {
     return (
-      <div className="overlay-controls-page">
-        <div className="premium-required">
-          <h1>🔒 Premium Access Required</h1>
-          <p>The overlay system is only available for premium members.</p>
+      <div className="oc-page">
+        <div className="oc-auth-wall">
+          <h2>Premium access required</h2>
+          <p>The extracted overlay system is only available for premium members.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="overlay-controls-page">
-      <div className="overlay-controls-container">
-        <header className="controls-header">
-          <h1>🎨 Overlay Controls</h1>
-          <p>Manage your stream overlay settings and widgets</p>
-        </header>
-
-        {!overlay ? (
-          <div className="no-overlay">
-            <div className="no-overlay-content">
-              <h2>Create Your Overlay</h2>
-              <p>You haven't created an overlay yet. Click below to get started!</p>
-              <button 
-                className="create-btn" 
-                onClick={createOverlay}
-                disabled={saving}
-              >
-                {saving ? 'Creating...' : '✨ Create Overlay'}
-              </button>
+    <div className="oc-page">
+      <div className="oc-layout">
+        <aside className="oc-sidebar">
+          <div className="oc-sidebar-brand">
+            <div className="oc-sidebar-brand-mark">OC</div>
+            <div>
+              <p className="oc-sidebar-eyebrow">Premium Workspace</p>
+              <h2 className="oc-sidebar-title">Overlay Center</h2>
             </div>
           </div>
-        ) : (
-          <>
-            <div className="overlay-url-section">
-              <h2>📺 OBS Browser Source URL</h2>
-              <div className="url-box">
-                <input 
-                  type="text" 
-                  value={overlayUrl} 
-                  readOnly 
-                  className="url-input"
-                />
-                <button 
-                  className="copy-btn" 
-                  onClick={copyToClipboard}
-                >
-                  {copied ? '✓ Copied!' : '📋 Copy'}
-                </button>
-              </div>
-              <p className="url-instructions">
-                Copy this URL and add it as a Browser Source in OBS
-              </p>
-              <a 
-                href={`/premium/overlay?id=${overlay.public_id}&preview=true`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="preview-link-btn"
+
+          <nav className="oc-sidebar-nav">
+            {Object.entries(PANEL_META).map(([panelId, panel]) => (
+              <button
+                key={panelId}
+                className={`oc-sidebar-btn ${activeTab === panelId ? 'oc-sidebar-btn--active' : ''}`}
+                onClick={() => setActiveTab(panelId)}
               >
-                👁️ Open Live Preview
-              </a>
+                <span className="oc-sidebar-btn-icon">{panel.icon}</span>
+                <span className="oc-sidebar-btn-text">
+                  <span className="oc-sidebar-btn-label">{panel.label}</span>
+                  <span className="oc-sidebar-btn-desc">{panel.description}</span>
+                </span>
+              </button>
+            ))}
+          </nav>
+
+          <div className="oc-sidebar-footer">
+            <div className="oc-user-card">
+              <span className="oc-user-label">Signed in as</span>
+              <strong>{accountLabel}</strong>
+            </div>
+            <button className="oc-sidebar-utility oc-sidebar-utility--danger" onClick={handleSignOut}>
+              Sign out
+            </button>
+          </div>
+        </aside>
+
+        <main className="oc-main">
+          <header className="oc-main-header">
+            <div>
+              <span className="oc-main-kicker">Control Center</span>
+              <h1>{activePanel.label}</h1>
+              <p>{activePanel.description}</p>
             </div>
 
-            <div className="settings-section">
-              {/* Tab Navigation */}
-              <div className="tab-navigation">
-                <button 
-                  className={`tab-button ${activeTab === 'widgets' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('widgets')}
-                >
-                  <span className="tab-icon">⚙️</span>
-                  Widget Settings
+            <div className="oc-main-header-actions">
+              {overlay ? (
+                <>
+                  <button className="oc-btn-secondary" onClick={copyToClipboard}>
+                    {copied ? 'URL copied' : 'Copy OBS URL'}
+                  </button>
+                  <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="oc-btn-primary">
+                    Open preview
+                  </a>
+                </>
+              ) : (
+                <button className="oc-btn-primary" onClick={createOverlay} disabled={saving}>
+                  {saving ? 'Creating overlay...' : 'Create overlay'}
                 </button>
-                <button 
-                  className={`tab-button ${activeTab === 'positioning' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('positioning')}
-                >
-                  <span className="tab-icon">🎯</span>
-                  Positioning & Layout
-                </button>
-                <button 
-                  className={`tab-button ${activeTab === 'styles' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('styles')}
-                >
-                  <span className="tab-icon">🎨</span>
-                  Styles
-                </button>
-              </div>
-
-              {/* Widget Settings Tab */}
-              {activeTab === 'widgets' && (
-                <WidgetSettingsTab overlay={overlay} updateSettings={updateSettings} slots={slots} />
-              )}
-
-              {/* Positioning Tab */}
-              {activeTab === 'positioning' && (
-                <PositioningTab overlay={overlay} updateSettings={updateSettings} />
-              )}
-
-              {/* Styles Tab */}
-              {activeTab === 'styles' && (
-                <StylesTab overlay={overlay} updateSettings={updateSettings} />
               )}
             </div>
-          </>
-        )}
+          </header>
 
+          <section className="oc-panel-shell">{renderPanelContent()}</section>
+        </main>
       </div>
     </div>
   );
