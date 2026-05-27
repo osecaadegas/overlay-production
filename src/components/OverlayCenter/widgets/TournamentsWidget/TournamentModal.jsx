@@ -212,13 +212,9 @@ export default function TournamentModal({ overlay, onClose, slots, updateSetting
     updateSettings(newSettings);
   };
 
-
-
-  return (
-    <>
-      <div className="modal-overlay-transparent" onClick={onClose}></div>
-      <div className="modal-draggable tournament-modal">
-        <div className="modal-content">
+  const panel = (
+    <div className={embedded ? 'widget-inline-panel tournament-modal' : 'modal-draggable tournament-modal'}>
+      <div className={`modal-content ${embedded ? 'modal-content--embedded' : ''}`}>
           <div className="modal-header">
             <h2>🏆 Tournament Manager</h2>
             <button className="modal-close" onClick={onClose}>✕</button>
@@ -642,15 +638,20 @@ export default function TournamentModal({ overlay, onClose, slots, updateSetting
                                 </div>
                               </div>
                             );
-                            const panel = (
-                                <div className={embedded ? 'widget-inline-panel tournament-modal' : 'modal-draggable tournament-modal'}>
-                                  <div className={`modal-content ${embedded ? 'modal-content--embedded' : ''}`}>
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="tournament-actions">
+                        {currentPhase !== 'finals' && (
+                          <button
+                            className="action-button advance-btn compact"
                             onClick={advanceToNextPhase}
                           >
                             ⏭️ Advance
                           </button>
                         )}
-                        <button 
+                        <button
                           className="action-button edit-btn compact"
                           onClick={() => setEditMode(!editMode)}
                         >
@@ -659,7 +660,6 @@ export default function TournamentModal({ overlay, onClose, slots, updateSetting
                       </div>
 
                       <div className="form-section">
-
                         {editMode && (
                           <div className="tournament-players-grid edit-mode">
                             {players.map((player, index) => (
@@ -668,18 +668,23 @@ export default function TournamentModal({ overlay, onClose, slots, updateSetting
                                   <span className="player-number">#{index + 1}</span>
                                   <span className="player-label">Player {index + 1}</span>
                                 </div>
-                                <input 
+                                <input
                                   type="text"
                                   value={player}
                                   onChange={(e) => handlePlayerChange(index, e.target.value)}
                                   className="tournament-player-input"
                                 />
-                                
+
                                 <div className="tournament-slot-wrapper">
-                                  <input 
+                                  <input
                                     type="text"
                                     value={slotSearches[index]}
                                     onChange={(e) => handleSlotSearch(index, e.target.value)}
+                                    onFocus={() => {
+                                      const newShowSuggestions = [...showSlotSuggestions];
+                                      newShowSuggestions[index] = slotSearches[index].length > 0;
+                                      setShowSlotSuggestions(newShowSuggestions);
+                                    }}
                                     className="tournament-slot-input"
                                   />
                                   {selectedSlots[index] && (
@@ -689,8 +694,8 @@ export default function TournamentModal({ overlay, onClose, slots, updateSetting
                                   )}
                                   {showSlotSuggestions[index] && filteredSlots(slotSearches[index]).length > 0 && (
                                     <div className="tournament-slot-suggestions">
-                                      {filteredSlots(slotSearches[index]).map(slot => (
-                                        <div 
+                                      {filteredSlots(slotSearches[index]).map((slot) => (
+                                        <div
                                           key={slot.id}
                                           className="tournament-slot-suggestion"
                                           onClick={() => handleSlotSelect(index, slot)}
@@ -714,7 +719,7 @@ export default function TournamentModal({ overlay, onClose, slots, updateSetting
             )}
           </div>
         </div>
-      </div>
+    </div>
   );
 
   if (embedded) {
