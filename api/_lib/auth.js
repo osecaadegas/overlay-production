@@ -2,6 +2,20 @@ import { createClient } from '@supabase/supabase-js';
 import { sendJson } from './http.js';
 import { getSupabaseAdmin } from './supabaseAdmin.js';
 
+function normalizeEnvValue(value) {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const normalized = value.trim().replace(/^['\"]|['\"]$/g, '');
+
+  if (!normalized || normalized === 'undefined' || normalized === 'null') {
+    return null;
+  }
+
+  return normalized;
+}
+
 function getBearerToken(req) {
   const header = req.headers.authorization || req.headers.Authorization;
   if (!header || !header.startsWith('Bearer ')) {
@@ -12,8 +26,10 @@ function getBearerToken(req) {
 }
 
 function getAuthClient() {
-  const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const anonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseUrl = normalizeEnvValue(process.env.SUPABASE_URL)
+    || normalizeEnvValue(process.env.VITE_SUPABASE_URL);
+  const anonKey = normalizeEnvValue(process.env.SUPABASE_ANON_KEY)
+    || normalizeEnvValue(process.env.VITE_SUPABASE_ANON_KEY);
 
   if (!supabaseUrl || !anonKey) {
     throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY.');
