@@ -443,22 +443,11 @@ export default function OverlayControls() {
           </p>
           <button className="oc-btn-primary" onClick={createOverlay} disabled={saving}>
             {saving ? 'Creating overlay...' : 'Create overlay'}
-            if (!overlay && !['overview', 'profile', 'tutorial'].includes(activeTab)) {
+          </button>
         </div>
       );
     }
 
-              case 'tutorial':
-                return (
-                  <TutorialTab
-                    overlay={overlay}
-                    overlayUrl={overlayUrl}
-                    previewUrl={previewUrl}
-                    onNavigate={openPanel}
-                    onCreateOverlay={createOverlay}
-                    saving={saving}
-                  />
-                );
     return (
       <div className="oc-overview-grid">
         <section className="oc-url-card">
@@ -519,11 +508,22 @@ export default function OverlayControls() {
   );
 
   const renderPanelContent = () => {
-    if (!overlay && !['overview', 'profile'].includes(activeTab)) {
+    if (!overlay && !['overview', 'profile', 'tutorial'].includes(activeTab)) {
       return renderLockedPanel();
     }
 
     switch (activeTab) {
+      case 'tutorial':
+        return (
+          <TutorialTab
+            overlay={overlay}
+            overlayUrl={overlayUrl}
+            previewUrl={previewUrl}
+            onNavigate={openPanel}
+            onCreateOverlay={createOverlay}
+            saving={saving}
+          />
+        );
       case 'profile':
         return <ProfileTab overlay={overlay} updateSettings={updateSettings} user={user} />;
       case 'widgets':
