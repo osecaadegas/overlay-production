@@ -17,8 +17,20 @@ function normalizeEnvValue(value) {
 	return normalized;
 }
 
+function normalizeSupabaseUrl(value) {
+	const normalized = normalizeEnvValue(value);
+
+	if (!normalized) {
+		return null;
+	}
+
+	return normalized
+		.replace(/\/(?:rest|auth|storage|realtime|functions|graphql)\/v1\/?$/i, '')
+		.replace(/\/+$/g, '');
+}
+
 function getBuildTimeConfig() {
-	const supabaseUrl = normalizeEnvValue(import.meta.env.VITE_SUPABASE_URL);
+	const supabaseUrl = normalizeSupabaseUrl(import.meta.env.VITE_SUPABASE_URL);
 	const supabaseAnonKey = normalizeEnvValue(import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 	if (!supabaseUrl || !supabaseAnonKey) {
@@ -42,7 +54,7 @@ async function getRuntimeConfig() {
 		throw new Error(payload.error || 'Failed to load runtime Supabase config.');
 	}
 
-	const supabaseUrl = normalizeEnvValue(payload.supabaseUrl);
+	const supabaseUrl = normalizeSupabaseUrl(payload.supabaseUrl);
 	const supabaseAnonKey = normalizeEnvValue(payload.supabaseAnonKey);
 
 	if (!supabaseUrl || !supabaseAnonKey) {
