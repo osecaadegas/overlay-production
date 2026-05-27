@@ -3,9 +3,23 @@ import { createClient } from '@supabase/supabase-js';
 let supabaseClient;
 let initializePromise;
 
+function normalizeEnvValue(value) {
+	if (typeof value !== 'string') {
+		return null;
+	}
+
+	const normalized = value.trim().replace(/^['\"]|['\"]$/g, '');
+
+	if (!normalized || normalized === 'undefined' || normalized === 'null') {
+		return null;
+	}
+
+	return normalized;
+}
+
 function getBuildTimeConfig() {
-	const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-	const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+	const supabaseUrl = normalizeEnvValue(import.meta.env.VITE_SUPABASE_URL);
+	const supabaseAnonKey = normalizeEnvValue(import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 	if (!supabaseUrl || !supabaseAnonKey) {
 		return null;
@@ -16,6 +30,7 @@ function getBuildTimeConfig() {
 
 async function getRuntimeConfig() {
 	const response = await fetch('/api/config', {
+		cache: 'no-store',
 		headers: {
 			Accept: 'application/json',
 		},
@@ -27,11 +42,14 @@ async function getRuntimeConfig() {
 		throw new Error(payload.error || 'Failed to load runtime Supabase config.');
 	}
 
-	if (!payload.supabaseUrl || !payload.supabaseAnonKey) {
+	const supabaseUrl = normalizeEnvValue(payload.supabaseUrl);
+	const supabaseAnonKey = normalizeEnvValue(payload.supabaseAnonKey);
+
+	if (!supabaseUrl || !supabaseAnonKey) {
 		throw new Error('Runtime Supabase config is incomplete.');
 	}
 
-	return payload;
+	return { supabaseUrl, supabaseAnonKey };
 }
 
 function getSupabaseClient() {
