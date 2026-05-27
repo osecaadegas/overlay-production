@@ -10,7 +10,7 @@ import LayoutTab from './tabs/LayoutTab';
 import StylesTab from './tabs/StylesTab';
 import ProfileTab from './tabs/ProfileTab';
 import TutorialTab from './tabs/TutorialTab';
-import BonusHuntWidget from './widgets/BonusHuntWidget/BonusHuntWidget';
+import BonusHuntPage from './tabs/BonusHuntPage';
 import SessionStatsWidget from './widgets/SessionStatsWidget/SessionStatsWidget';
 import RecentWinsWidget from './widgets/RecentWinsWidget/RecentWinsWidget';
 import TournamentsWidget from './widgets/TournamentsWidget/TournamentsWidget';
@@ -127,7 +127,8 @@ const WIDGET_PAGE_META = {
     group: 'Streamer Tools',
     title: 'Bonus Hunt Tracker',
     description: 'This now behaves like the old center: you land on a full page and configure the hunt inline.',
-    Component: BonusHuntWidget,
+    shellClassName: 'oc-detail-widget-shell--wide',
+    Component: BonusHuntPage,
   },
   tournaments: {
     group: 'Streamer Tools',
@@ -331,19 +332,20 @@ export default function OverlayControls() {
     return false;
   };
 
+  const loadSlots = async () => {
+    console.log('Loading slots from database...');
+    try {
+      const data = await getAllSlots();
+      console.log('Slots loaded successfully:', data?.length, 'slots');
+      console.log('First few slots:', data?.slice(0, 3));
+      setSlots(data || []);
+    } catch (error) {
+      console.error('Error loading slots:', error);
+      setSlots([]);
+    }
+  };
+
   useEffect(() => {
-    const loadSlots = async () => {
-      console.log('Loading slots from database...');
-      try {
-        const data = await getAllSlots();
-        console.log('Slots loaded successfully:', data?.length, 'slots');
-        console.log('First few slots:', data?.slice(0, 3));
-        setSlots(data || []);
-      } catch (error) {
-        console.error('Error loading slots:', error);
-        setSlots([]);
-      }
-    };
     loadSlots();
   }, []);
 
@@ -424,8 +426,14 @@ export default function OverlayControls() {
           ))}
         </div>
 
-        <div className="oc-detail-widget-shell">
-          <Component overlay={overlay} updateSettings={updateSettings} slots={slots} isFocused />
+        <div className={`oc-detail-widget-shell ${page.shellClassName || ''}`.trim()}>
+          <Component
+            overlay={overlay}
+            updateSettings={updateSettings}
+            slots={slots}
+            refreshSlots={loadSlots}
+            isFocused
+          />
         </div>
       </div>
     );

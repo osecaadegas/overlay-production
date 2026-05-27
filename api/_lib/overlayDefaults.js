@@ -10,6 +10,7 @@ const widgetDefaults = {
     showStatistics: true,
     animatedTracker: true,
     bonusList: [],
+    huntHistory: [],
     position: { x: 50, y: 50 },
     layout: 'sidebar',
   },

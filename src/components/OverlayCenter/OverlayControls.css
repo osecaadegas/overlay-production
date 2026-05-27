@@ -2270,6 +2270,10 @@
   max-width: 980px;
 }
 
+.oc-detail-widget-shell--wide {
+  max-width: none;
+}
+
 .oc-detail-widget-shell .widget-inline-panel {
   margin-top: 12px;
 }
@@ -3032,6 +3036,487 @@
 
 .widget-inline-panel .modal-footer {
   justify-content: flex-end;
+}
+
+.bonus-hunt-workspace {
+  display: grid;
+  gap: 18px;
+}
+
+.bonus-hunt-banner {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.66);
+  color: var(--oc-text-secondary);
+  font-size: 0.92rem;
+}
+
+.bonus-hunt-banner--success {
+  border-color: rgba(74, 222, 128, 0.28);
+  background: rgba(6, 78, 59, 0.32);
+  color: #dcfce7;
+}
+
+.bonus-hunt-banner--error {
+  border-color: rgba(248, 113, 113, 0.3);
+  background: rgba(127, 29, 29, 0.28);
+  color: #fecaca;
+}
+
+.bonus-hunt-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.bonus-hunt-stat-card,
+.bonus-hunt-panel,
+.bonus-hunt-summary-card {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(139, 92, 246, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(17, 24, 39, 0.9), rgba(11, 15, 24, 0.94));
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
+}
+
+.bonus-hunt-stat-card span,
+.bonus-hunt-eyebrow {
+  color: var(--oc-text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.bonus-hunt-stat-card strong,
+.bonus-hunt-panel__header h3,
+.bonus-hunt-summary-card strong {
+  color: var(--oc-text-primary);
+}
+
+.bonus-hunt-stat-card strong {
+  font-size: 1.15rem;
+}
+
+.bonus-hunt-stat-card small,
+.bonus-hunt-panel__header p,
+.bonus-hunt-item__title span,
+.bonus-hunt-summary-card small,
+.bonus-hunt-note-list,
+.bonus-hunt-empty-state,
+.bonus-hunt-item__meta span,
+.bonus-hunt-selected-slot small,
+.bonus-hunt-selected-slot span {
+  color: var(--oc-text-secondary);
+}
+
+.bonus-hunt-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.95fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.bonus-hunt-main-column,
+.bonus-hunt-side-column {
+  display: grid;
+  gap: 18px;
+}
+
+.bonus-hunt-panel__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.bonus-hunt-panel__header h3 {
+  margin: 4px 0 0;
+  font-size: 1.25rem;
+}
+
+.bonus-hunt-panel__header p {
+  margin: 8px 0 0;
+  line-height: 1.6;
+}
+
+.bonus-hunt-field-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.bonus-hunt-field-grid--stacked {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.bonus-hunt-field,
+.bonus-hunt-search,
+.bonus-hunt-item__payout {
+  display: grid;
+  gap: 8px;
+}
+
+.bonus-hunt-field--wide {
+  grid-column: span 2;
+}
+
+.bonus-hunt-field span,
+.bonus-hunt-search span,
+.bonus-hunt-item__payout span {
+  color: var(--oc-text-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bonus-hunt-field input,
+.bonus-hunt-search .slot-search-wrapper input,
+.bonus-hunt-item__payout input {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 12, 22, 0.82);
+  color: var(--oc-text-primary);
+  padding: 0 14px;
+  font: inherit;
+}
+
+.bonus-hunt-field input:focus,
+.bonus-hunt-search .slot-search-wrapper input:focus,
+.bonus-hunt-item__payout input:focus {
+  outline: none;
+  border-color: rgba(139, 92, 246, 0.42);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+
+.bonus-hunt-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.bonus-hunt-action-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.bonus-hunt-toggle-row,
+.bonus-hunt-badge-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bonus-hunt-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--oc-text-primary);
+}
+
+.bonus-hunt-toggle--hero {
+  margin-left: auto;
+}
+
+.bonus-hunt-pill-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bonus-hunt-pill-toggle input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.bonus-hunt-pill-toggle span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(139, 92, 246, 0.24);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--oc-text-secondary);
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.bonus-hunt-pill-toggle input:checked + span {
+  border-color: rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.16);
+  color: var(--oc-text-primary);
+}
+
+.bonus-hunt-add-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(180px, 0.7fr);
+  gap: 14px;
+}
+
+.bonus-hunt-search .slot-search-wrapper {
+  position: relative;
+}
+
+.bonus-hunt-selected-slot,
+.bonus-hunt-empty-state,
+.bonus-hunt-source-link {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bonus-hunt-selected-slot {
+  grid-template-columns: 80px minmax(0, 1fr);
+  align-items: center;
+}
+
+.bonus-hunt-selected-slot img,
+.bonus-hunt-item img,
+.bonus-hunt-image-option img,
+.bonus-hunt-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bonus-hunt-selected-slot img,
+.bonus-hunt-image-preview {
+  height: 80px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.bonus-hunt-selected-slot strong {
+  color: var(--oc-text-primary);
+  font-size: 1rem;
+}
+
+.bonus-hunt-list {
+  display: grid;
+  gap: 12px;
+}
+
+.bonus-hunt-history-list {
+  display: grid;
+  gap: 12px;
+}
+
+.bonus-hunt-history-item {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.bonus-hunt-history-item__header,
+.bonus-hunt-history-item__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.bonus-hunt-history-item__header strong {
+  color: var(--oc-text-primary);
+  display: block;
+}
+
+.bonus-hunt-history-item__header span,
+.bonus-hunt-history-item__stats span {
+  color: var(--oc-text-secondary);
+  font-size: 0.86rem;
+}
+
+.bonus-hunt-history-item__stats {
+  display: flex;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+}
+
+.bonus-hunt-item {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) minmax(130px, 160px) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.bonus-hunt-item--opened {
+  border-color: rgba(74, 222, 128, 0.22);
+  background: rgba(6, 95, 70, 0.16);
+}
+
+.bonus-hunt-item img {
+  height: 72px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.bonus-hunt-item__body,
+.bonus-hunt-item__title,
+.bonus-hunt-item__actions,
+.bonus-hunt-item__buttons {
+  display: grid;
+  gap: 8px;
+}
+
+.bonus-hunt-item__title strong {
+  color: var(--oc-text-primary);
+  font-size: 1rem;
+}
+
+.bonus-hunt-item__meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.bonus-hunt-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.16);
+  color: #e9d5ff;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.bonus-hunt-chip--danger {
+  background: rgba(248, 113, 113, 0.16);
+  color: #fecaca;
+}
+
+.bonus-hunt-item__open-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--oc-text-secondary);
+  font-size: 0.86rem;
+}
+
+.bonus-hunt-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(248, 113, 113, 0.28);
+  background: rgba(127, 29, 29, 0.18);
+  color: #fecaca;
+  cursor: pointer;
+}
+
+.bonus-hunt-source-link {
+  color: #c4b5fd;
+  text-decoration: none;
+}
+
+.bonus-hunt-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+  gap: 10px;
+}
+
+.bonus-hunt-image-option {
+  padding: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+}
+
+.bonus-hunt-image-option--selected {
+  border-color: rgba(139, 92, 246, 0.44);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.12);
+}
+
+.bonus-hunt-image-option img {
+  height: 88px;
+}
+
+.bonus-hunt-note-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+  line-height: 1.6;
+}
+
+@media (max-width: 1180px) {
+  .bonus-hunt-stats-grid,
+  .bonus-hunt-field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bonus-hunt-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .bonus-hunt-stats-grid,
+  .bonus-hunt-field-grid,
+  .bonus-hunt-field-grid--stacked,
+  .bonus-hunt-add-grid,
+  .bonus-hunt-item {
+    grid-template-columns: 1fr;
+  }
+
+  .bonus-hunt-field--wide {
+    grid-column: span 1;
+  }
+
+  .bonus-hunt-selected-slot,
+  .bonus-hunt-panel__header,
+  .bonus-hunt-toolbar,
+  .bonus-hunt-history-item__header,
+  .bonus-hunt-history-item__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .bonus-hunt-panel__header {
+    display: grid;
+  }
+
+  .bonus-hunt-toggle--hero {
+    margin-left: 0;
+    justify-content: space-between;
+  }
 }
 
 .widget-configure-btn,
