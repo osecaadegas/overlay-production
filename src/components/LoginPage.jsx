@@ -251,7 +251,6 @@ export default function LoginPage() {
             </div>
           </section>
         </div>
-      </section>
       </div>
     </div>
   );
