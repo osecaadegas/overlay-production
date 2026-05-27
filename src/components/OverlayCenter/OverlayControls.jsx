@@ -11,6 +11,35 @@ import StylesTab from './tabs/StylesTab';
 import ProfileTab from './tabs/ProfileTab';
 import './OverlayControls.css';
 
+const WIDGET_SHORTCUT_GROUPS = [
+  {
+    label: 'Streamer Tools',
+    items: [
+      { id: 'bonusHunt', icon: '🎯', label: 'Bonus Hunt', description: 'Tracker, bankroll, bonus list.' },
+      { id: 'tournaments', icon: '🏆', label: 'Tournaments', description: 'Bracket setup and results.' },
+      { id: 'sessionStats', icon: '📊', label: 'Session Stats', description: 'Session metrics and totals.' },
+      { id: 'recentWins', icon: '🎁', label: 'Recent Wins', description: 'Latest hits and multipliers.' },
+    ],
+  },
+  {
+    label: 'Games And Picks',
+    items: [
+      { id: 'coinflip', icon: '🪙', label: 'Coin Flip', description: 'Viewer game setup.' },
+      { id: 'slotmachine', icon: '🎰', label: 'Slotmachine', description: 'Slot machine widget.' },
+      { id: 'randomSlotPicker', icon: '🎲', label: 'Random Picker', description: 'Random slot selection.' },
+      { id: 'wheelOfNames', icon: '🎡', label: 'Wheel Of Names', description: 'Viewer and prize wheel.' },
+    ],
+  },
+  {
+    label: 'Brand And Community',
+    items: [
+      { id: 'navbar', icon: '📊', label: 'Navbar', description: 'Name, motto, mode.' },
+      { id: 'chat', icon: '💬', label: 'Twitch Chat', description: 'Chat source and limits.' },
+      { id: 'customization', icon: '🎨', label: 'Customization', description: 'Custom widget content.' },
+    ],
+  },
+];
+
 const PANEL_META = {
   profile: {
     label: 'Profile',
@@ -55,6 +84,7 @@ export default function OverlayControls() {
   const [copied, setCopied] = useState(false);
   const [slots, setSlots] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
+  const [focusedWidget, setFocusedWidget] = useState(null);
 
   const overlayUrl = overlay ? `${window.location.origin}/premium/overlay?id=${overlay.public_id}` : '';
   const previewUrl = overlay ? `${overlayUrl}&preview=true` : '';
@@ -190,6 +220,11 @@ export default function OverlayControls() {
     navigate('/', { replace: true });
   };
 
+  const openWidgetSetup = (widgetId) => {
+    setActiveTab('widgets');
+    setFocusedWidget(widgetId);
+  };
+
   const renderOverviewPanel = () => {
     if (!overlay) {
       return (
@@ -275,7 +310,15 @@ export default function OverlayControls() {
       case 'profile':
         return <ProfileTab overlay={overlay} updateSettings={updateSettings} user={user} />;
       case 'widgets':
-        return <WidgetSettingsTab overlay={overlay} updateSettings={updateSettings} slots={slots} />;
+        return (
+          <WidgetSettingsTab
+            overlay={overlay}
+            updateSettings={updateSettings}
+            slots={slots}
+            focusedWidget={focusedWidget}
+            onRequestFocus={setFocusedWidget}
+          />
+        );
       case 'layout':
         return <LayoutTab overlay={overlay} updateSettings={updateSettings} />;
       case 'positioning':
@@ -327,7 +370,12 @@ export default function OverlayControls() {
               <button
                 key={panelId}
                 className={`oc-sidebar-btn ${activeTab === panelId ? 'oc-sidebar-btn--active' : ''}`}
-                onClick={() => setActiveTab(panelId)}
+                onClick={() => {
+                  setActiveTab(panelId);
+                  if (panelId !== 'widgets') {
+                    setFocusedWidget(null);
+                  }
+                }}
               >
                 <span className="oc-sidebar-btn-icon">{panel.icon}</span>
                 <span className="oc-sidebar-btn-text">
@@ -337,6 +385,30 @@ export default function OverlayControls() {
               </button>
             ))}
           </nav>
+
+          <div className="oc-sidebar-shortcuts-shell">
+            <span className="oc-sidebar-shortcuts-kicker">Widget Setup</span>
+            {WIDGET_SHORTCUT_GROUPS.map((group) => (
+              <div key={group.label} className="oc-sidebar-shortcuts-group">
+                <span className="oc-sidebar-shortcuts-label">{group.label}</span>
+                <div className="oc-sidebar-shortcuts-list">
+                  {group.items.map((item) => (
+                    <button
+                      key={item.id}
+                      className={`oc-sidebar-shortcut ${activeTab === 'widgets' && focusedWidget === item.id ? 'oc-sidebar-shortcut--active' : ''}`}
+                      onClick={() => openWidgetSetup(item.id)}
+                    >
+                      <span className="oc-sidebar-shortcut-icon">{item.icon}</span>
+                      <span className="oc-sidebar-shortcut-copy">
+                        <span className="oc-sidebar-shortcut-title">{item.label}</span>
+                        <span className="oc-sidebar-shortcut-desc">{item.description}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
 
           <div className="oc-sidebar-footer">
             <div className="oc-user-card">
