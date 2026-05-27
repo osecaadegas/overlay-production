@@ -2104,11 +2104,24 @@
   gap: 24px;
 }
 
+.oc-main--compact {
+  padding-top: 18px;
+  gap: 16px;
+  align-content: start;
+}
+
 .oc-main-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 20px;
+}
+
+.oc-main-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .oc-main-kicker {
@@ -2189,6 +2202,10 @@
   background: linear-gradient(180deg, rgba(17, 24, 39, 0.86), rgba(11, 15, 24, 0.92));
   box-shadow: var(--oc-shadow-lg);
   backdrop-filter: blur(18px);
+}
+
+.oc-panel-shell--compact {
+  padding-top: 18px;
 }
 
 .oc-detail-page,

@@ -128,6 +128,9 @@ const WIDGET_PAGE_META = {
     title: 'Bonus Hunt Tracker',
     description: 'This now behaves like the old center: you land on a full page and configure the hunt inline.',
     shellClassName: 'oc-detail-widget-shell--wide',
+    compactMainHeader: true,
+    hideDetailHero: true,
+    hideDetailMetrics: true,
     Component: BonusHuntPage,
   },
   tournaments: {
@@ -213,6 +216,8 @@ export default function OverlayControls() {
   const overlayUrl = overlay ? `${window.location.origin}/premium/overlay?id=${overlay.public_id}` : '';
   const previewUrl = overlay ? `${overlayUrl}&preview=true` : '';
   const activePanel = PANEL_META[activeTab] ?? PANEL_META.overview;
+  const activeWidgetPage = WIDGET_PAGE_META[activeTab];
+  const useCompactMainHeader = Boolean(activeWidgetPage?.compactMainHeader);
   const accountLabel = user?.email || user?.user_metadata?.full_name || user?.id;
 
   useEffect(() => {
@@ -364,6 +369,27 @@ export default function OverlayControls() {
     navigate('/', { replace: true });
   };
 
+  const renderMainActions = () => {
+    if (overlay) {
+      return (
+        <>
+          <button className="oc-btn-secondary" onClick={copyToClipboard}>
+            {copied ? 'URL copied' : 'Copy OBS URL'}
+          </button>
+          <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="oc-btn-primary">
+            Open preview
+          </a>
+        </>
+      );
+    }
+
+    return (
+      <button className="oc-btn-primary" onClick={createOverlay} disabled={saving}>
+        {saving ? 'Creating overlay...' : 'Create overlay'}
+      </button>
+    );
+  };
+
   const openPanel = (panelId) => {
     setActiveTab(panelId);
     if (panelId !== 'widgets') {
@@ -408,23 +434,29 @@ export default function OverlayControls() {
           }
         : null,
     ].filter(Boolean);
+    const showDetailHero = !page.hideDetailHero;
+    const showDetailMetrics = !page.hideDetailMetrics && detailCards.length > 0;
 
     return (
       <div className="oc-detail-page">
-        <section className="oc-detail-hero">
-          <span className="oc-panel-chip">{page.group}</span>
-          <h2>{page.title}</h2>
-          <p>{page.description}</p>
-        </section>
+        {showDetailHero ? (
+          <section className="oc-detail-hero">
+            <span className="oc-panel-chip">{page.group}</span>
+            <h2>{page.title}</h2>
+            <p>{page.description}</p>
+          </section>
+        ) : null}
 
-        <div className="oc-detail-metrics">
-          {detailCards.map((card) => (
-            <article key={card.label} className="oc-detail-metric">
-              <span>{card.label}</span>
-              <strong>{card.value}</strong>
-            </article>
-          ))}
-        </div>
+        {showDetailMetrics ? (
+          <div className="oc-detail-metrics">
+            {detailCards.map((card) => (
+              <article key={card.label} className="oc-detail-metric">
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+              </article>
+            ))}
+          </div>
+        ) : null}
 
         <div className={`oc-detail-widget-shell ${page.shellClassName || ''}`.trim()}>
           <Component
@@ -802,33 +834,22 @@ export default function OverlayControls() {
           </div>
         </aside>
 
-        <main className="oc-main">
-          <header className="oc-main-header">
-            <div>
-              <span className="oc-main-kicker">Control Center</span>
-              <h1>{activePanel.label}</h1>
-              <p>{activePanel.description}</p>
-            </div>
+        <main className={`oc-main ${useCompactMainHeader ? 'oc-main--compact' : ''}`.trim()}>
+          {useCompactMainHeader ? (
+            <div className="oc-main-toolbar">{renderMainActions()}</div>
+          ) : (
+            <header className="oc-main-header">
+              <div>
+                <span className="oc-main-kicker">Control Center</span>
+                <h1>{activePanel.label}</h1>
+                <p>{activePanel.description}</p>
+              </div>
 
-            <div className="oc-main-header-actions">
-              {overlay ? (
-                <>
-                  <button className="oc-btn-secondary" onClick={copyToClipboard}>
-                    {copied ? 'URL copied' : 'Copy OBS URL'}
-                  </button>
-                  <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="oc-btn-primary">
-                    Open preview
-                  </a>
-                </>
-              ) : (
-                <button className="oc-btn-primary" onClick={createOverlay} disabled={saving}>
-                  {saving ? 'Creating overlay...' : 'Create overlay'}
-                </button>
-              )}
-            </div>
-          </header>
+              <div className="oc-main-header-actions">{renderMainActions()}</div>
+            </header>
+          )}
 
-          <section className="oc-panel-shell">{renderPanelContent()}</section>
+          <section className={`oc-panel-shell ${useCompactMainHeader ? 'oc-panel-shell--compact' : ''}`.trim()}>{renderPanelContent()}</section>
         </main>
       </div>
     </div>
