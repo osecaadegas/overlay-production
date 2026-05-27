@@ -2668,6 +2668,10 @@
   align-content: start;
 }
 
+.widget-card--expanded {
+  overflow: visible;
+}
+
 .widget-card::before {
   content: '';
   position: absolute;
@@ -2676,7 +2680,7 @@
   background: linear-gradient(90deg, rgba(139, 92, 246, 0.08), rgba(56, 189, 248, 0.08));
 }
 
-.widget-card:has(input[type='checkbox']:checked) {
+.widget-card:has(> .widget-card-header input[type='checkbox']:checked) {
   border-color: rgba(139, 92, 246, 0.32);
   background:
     radial-gradient(circle at top right, rgba(139, 92, 246, 0.14), transparent 38%),
@@ -2684,7 +2688,7 @@
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(139, 92, 246, 0.08) inset;
 }
 
-.widget-card:has(input[type='checkbox']:checked)::before {
+.widget-card:has(> .widget-card-header input[type='checkbox']:checked)::before {
   background: linear-gradient(90deg, #8b5cf6, #38bdf8);
 }
 
@@ -2714,8 +2718,32 @@
   line-height: 1.65;
 }
 
-.widget-card:has(input[type='checkbox']:checked) .widget-description {
+.widget-card:has(> .widget-card-header input[type='checkbox']:checked) .widget-description {
   color: #dbe6f5;
+}
+
+.widget-inline-panel {
+  display: grid;
+  margin-top: 4px;
+}
+
+.modal-content--embedded {
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  border-radius: 22px;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(139, 92, 246, 0.08) inset;
+}
+
+.widget-inline-panel .modal-header,
+.widget-inline-panel .modal-body,
+.widget-inline-panel .modal-footer {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.widget-inline-panel .modal-footer {
+  justify-content: flex-end;
 }
 
 .widget-configure-btn,

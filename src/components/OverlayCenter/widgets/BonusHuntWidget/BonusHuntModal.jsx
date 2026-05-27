@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function BonusHuntModal({ overlay, onClose, slots, updateSettings }) {
+export default function BonusHuntModal({ overlay, onClose, slots, updateSettings, embedded = false }) {
   
   const [startMoney, setStartMoney] = useState(overlay.settings.widgets?.bonusHunt?.startMoney || 0);
   const [targetMoney, setTargetMoney] = useState(overlay.settings.widgets?.bonusHunt?.targetMoney || 0);
@@ -86,10 +86,8 @@ export default function BonusHuntModal({ overlay, onClose, slots, updateSettings
     updateSettings(newSettings);
   };
 
-  return (
-    <>
-      <div className="modal-overlay-transparent" onClick={onClose}></div>
-      <div className="modal-content modal-draggable">
+  const panel = (
+      <div className={`modal-content ${embedded ? 'modal-content--embedded' : 'modal-draggable'}`}>
         <div className="modal-header">
           <h2>🎯 Bonus Hunt Tracker Configuration</h2>
           <button className="modal-close" onClick={onClose}>✕</button>
@@ -278,9 +276,19 @@ export default function BonusHuntModal({ overlay, onClose, slots, updateSettings
         </div>
 
         <div className="modal-footer">
-          <button className="modal-save-btn" onClick={onClose}>Done</button>
+          <button className="modal-save-btn" onClick={onClose}>{embedded ? 'Hide Setup' : 'Done'}</button>
         </div>
       </div>
+  );
+
+  if (embedded) {
+    return <div className="widget-inline-panel">{panel}</div>;
+  }
+
+  return (
+    <>
+      <div className="modal-overlay-transparent" onClick={onClose}></div>
+      {panel}
     </>
   );
 }

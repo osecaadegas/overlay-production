@@ -78,7 +78,7 @@ export default function WidgetSettingsTab({ overlay, updateSettings, slots, focu
             <span className="widget-dashboard-kicker">Widget Library</span>
             <h2>Build the live stack for this overlay.</h2>
             <p>
-              Turn core widgets on and off, open each configuration modal, and keep everything saved to the
+              Turn core widgets on and off, expand each setup panel inline, and keep everything saved to the
               current overlay workspace as you tune the experience.
             </p>
           </div>
@@ -147,7 +147,12 @@ export default function WidgetSettingsTab({ overlay, updateSettings, slots, focu
                     id={`widget-slot-${id}`}
                     className={`widget-slot ${focusedWidget === id ? 'widget-slot--focused' : ''}`}
                   >
-                    <Component overlay={overlay} updateSettings={updateSettings} slots={slots} />
+                    <Component
+                      overlay={overlay}
+                      updateSettings={updateSettings}
+                      slots={slots}
+                      isFocused={focusedWidget === id}
+                    />
                   </div>
                 ))}
               </div>

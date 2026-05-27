@@ -1,17 +1,50 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './TournamentModal.css';
 
-export default function TournamentModal({ overlay, onClose, slots, updateSettings }) {
-  const [players, setPlayers] = useState(['', '', '', '', '', '', '', '']);
-  const [selectedSlots, setSelectedSlots] = useState([null, null, null, null, null, null, null, null]);
-  const [slotSearches, setSlotSearches] = useState(['', '', '', '', '', '', '', '']);
+const EMPTY_PLAYERS = ['', '', '', '', '', '', '', ''];
+const EMPTY_SLOTS = [null, null, null, null, null, null, null, null];
+const EMPTY_SUGGESTIONS = [false, false, false, false, false, false, false, false];
+
+function normalizePlayers(players) {
+  if (!Array.isArray(players)) {
+    return [...EMPTY_PLAYERS];
+  }
+
+  return [...players.slice(0, 8), ...EMPTY_PLAYERS].slice(0, 8).map((player) => player || '');
+}
+
+function normalizeSlots(slots) {
+  if (!Array.isArray(slots)) {
+    return [...EMPTY_SLOTS];
+  }
+
+  return [...slots.slice(0, 8), ...EMPTY_SLOTS].slice(0, 8);
+}
+
+export default function TournamentModal({ overlay, onClose, slots, updateSettings, embedded = false }) {
+  const savedTournamentData = overlay.settings.widgets?.tournaments?.data;
+  const initialPlayers = normalizePlayers(savedTournamentData?.players);
+  const initialSlots = normalizeSlots(savedTournamentData?.slots);
+
+  const [players, setPlayers] = useState(initialPlayers);
+  const [selectedSlots, setSelectedSlots] = useState(initialSlots);
+  const [slotSearches, setSlotSearches] = useState(initialSlots.map((slot) => slot?.name || ''));
   const [showSlotSuggestions, setShowSlotSuggestions] = useState([false, false, false, false, false, false, false, false]);
-  const [matchFormat, setMatchFormat] = useState('single'); // 'single' or 'bo3'
-  const [tournamentStarted, setTournamentStarted] = useState(false);
-  const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
-  const [betAmount, setBetAmount] = useState('');
-  const [payoutAmount, setPayoutAmount] = useState('');
+  const [matchFormat, setMatchFormat] = useState(savedTournamentData?.format || 'single');
+  const [tournamentStarted, setTournamentStarted] = useState(Boolean(savedTournamentData?.matches?.length));
   const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    const currentData = overlay.settings.widgets?.tournaments?.data;
+    const syncedSlots = normalizeSlots(currentData?.slots);
+
+    setPlayers(normalizePlayers(currentData?.players));
+    setSelectedSlots(syncedSlots);
+    setSlotSearches(syncedSlots.map((slot) => slot?.name || ''));
+    setShowSlotSuggestions([...EMPTY_SUGGESTIONS]);
+    setMatchFormat(currentData?.format || 'single');
+    setTournamentStarted(Boolean(currentData?.matches?.length));
+  }, [overlay.settings.widgets?.tournaments?.data]);
 
   const handlePlayerChange = (index, value) => {
     const newPlayers = [...players];
@@ -609,14 +642,9 @@ export default function TournamentModal({ overlay, onClose, slots, updateSetting
                                 </div>
                               </div>
                             );
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="tournament-actions">
-                        {currentPhase !== 'finals' && (
-                          <button 
-                            className="action-button advance-btn compact" 
+                            const panel = (
+                                <div className={embedded ? 'widget-inline-panel tournament-modal' : 'modal-draggable tournament-modal'}>
+                                  <div className={`modal-content ${embedded ? 'modal-content--embedded' : ''}`}>
                             onClick={advanceToNextPhase}
                           >
                             ⏭️ Advance
@@ -687,6 +715,16 @@ export default function TournamentModal({ overlay, onClose, slots, updateSetting
           </div>
         </div>
       </div>
+  );
+
+  if (embedded) {
+    return panel;
+  }
+
+  return (
+    <>
+      <div className="modal-overlay-transparent" onClick={onClose}></div>
+      {panel}
     </>
   );
 }
