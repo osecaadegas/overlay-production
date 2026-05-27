@@ -8,9 +8,15 @@ import WidgetSettingsTab from './tabs/WidgetSettingsTab';
 import PositioningTab from './tabs/PositioningTab';
 import LayoutTab from './tabs/LayoutTab';
 import StylesTab from './tabs/StylesTab';
+import ProfileTab from './tabs/ProfileTab';
 import './OverlayControls.css';
 
 const PANEL_META = {
+  profile: {
+    label: 'Profile',
+    icon: '◉',
+    description: 'Identity, channels, and widget-facing profile defaults.',
+  },
   overview: {
     label: 'Overview',
     icon: '◈',
@@ -144,10 +150,13 @@ export default function OverlayControls() {
       if (response.ok) {
         const data = await response.json();
         setOverlay(data);
+        return true;
       }
     } catch (error) {
       console.error('Error updating settings:', error);
     }
+
+    return false;
   };
 
   useEffect(() => {
@@ -258,11 +267,13 @@ export default function OverlayControls() {
   );
 
   const renderPanelContent = () => {
-    if (!overlay && activeTab !== 'overview') {
+    if (!overlay && !['overview', 'profile'].includes(activeTab)) {
       return renderLockedPanel();
     }
 
     switch (activeTab) {
+      case 'profile':
+        return <ProfileTab overlay={overlay} updateSettings={updateSettings} user={user} />;
       case 'widgets':
         return <WidgetSettingsTab overlay={overlay} updateSettings={updateSettings} slots={slots} />;
       case 'layout':
